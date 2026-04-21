@@ -25,7 +25,7 @@
     --gray-800: #1A202C;
     --white:    #FFFFFF;
     --card-w:   300px;
-    --card-h:   400px;
+    --card-h:   430px;
     --avatar-sz:84px;
     --radius:   16px;
     --radius-sm: 10px;
@@ -197,6 +197,60 @@
     max-width: 1440px;
     margin: 0 auto;
     padding: 40px 28px 80px;
+  }
+  .export-panel {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    margin: 0 4px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .export-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-800);
+  }
+  .export-sub {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-top: 3px;
+  }
+  .export-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .export-btn {
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  .export-btn:hover {
+    border-color: var(--cesag-green);
+    color: var(--cesag-green);
+    background: var(--cesag-green-lt);
+  }
+  .export-btn.primary {
+    background: var(--cesag-green);
+    color: var(--white);
+    border-color: var(--cesag-green);
+  }
+  .export-btn.primary:hover {
+    background: var(--cesag-green-dk);
+    border-color: var(--cesag-green-dk);
+    color: var(--white);
   }
   .section-head {
     display: flex;
@@ -413,7 +467,13 @@
     box-shadow: 0 2px 8px rgba(0,0,0,.06);
   }
   .contact-pill svg { flex-shrink: 0; color: var(--prog-color, var(--cesag-green)); opacity: 0.7; }
-  .contact-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .contact-pill span {
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    word-break: break-all;
+    line-height: 1.3;
+  }
   .contact-pill.whatsapp {
     flex: 0 0 auto;
     min-width: 100px;
@@ -430,6 +490,9 @@
   .contact-pill.email {
     position: relative;
     cursor: copy;
+    align-items: flex-start;
+    padding-top: 7px;
+    padding-bottom: 7px;
   }
   .contact-pill.email::after {
     content: 'Copié !';
@@ -487,13 +550,14 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
 
   @media (max-width: 768px) {
-    :root { --card-w: 260px; --card-h: 380px; --avatar-sz: 72px; }
+    :root { --card-w: 260px; --card-h: 410px; --avatar-sz: 72px; }
     .site-header { padding: 20px 16px 16px; top: 0; position: relative; }
     .tabs-bar { top: 0; }
     .main { padding: 24px 14px 50px; }
     #searchInput { width: 180px; }
     .section-title { font-size: 20px; }
     .card-name { font-size: 14px; }
+    .export-panel { margin-left: 0; margin-right: 0; }
   }
   @media (max-width: 480px) {
     :root { --card-w: 100%; }
@@ -556,6 +620,16 @@
 </nav>
 
 <main class="main" id="main">
+  <section class="export-panel">
+    <div>
+      <div class="export-title">Espace export photos</div>
+      <div class="export-sub">Exportez la liste des photos avec les emails visibles (CSV/JSON).</div>
+    </div>
+    <div class="export-actions">
+      <button class="export-btn primary" id="exportPhotosCsvBtn">Exporter photos CSV</button>
+      <button class="export-btn" id="exportPhotosJsonBtn">Exporter photos JSON</button>
+    </div>
+  </section>
   <div id="noResult">
     <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <p>Aucun résultat pour cette recherche.</p>
@@ -740,6 +814,43 @@ tabsInner.addEventListener('click', e => {
 const searchInput = document.getElementById('searchInput');
 const visibleCount = document.getElementById('visibleCount');
 const noResult = document.getElementById('noResult');
+const exportPhotosCsvBtn = document.getElementById('exportPhotosCsvBtn');
+const exportPhotosJsonBtn = document.getElementById('exportPhotosJsonBtn');
+
+function makeExportRows() {
+  return DATA.map(p => ({
+    id: p.id,
+    nomComplet: p.nomComplet,
+    programme: p.programme,
+    email: p.email || '',
+    photo: `photos/${p.id}.jpg`,
+  }));
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportPhotosCsv() {
+  const rows = makeExportRows();
+  const header = ['id', 'nom_complet', 'programme', 'email', 'photo_path'];
+  const body = rows.map(r => [r.id, r.nomComplet, r.programme, r.email, r.photo].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+  const csv = [header.join(','), ...body].join('\n');
+  downloadFile(csv, 'export_photos_mba_cesag.csv', 'text/csv;charset=utf-8;');
+}
+
+function exportPhotosJson() {
+  const json = JSON.stringify(makeExportRows(), null, 2);
+  downloadFile(json, 'export_photos_mba_cesag.json', 'application/json');
+}
 
 function applySearch() {
   const q = searchInput.value.trim().toLowerCase();
@@ -757,6 +868,8 @@ function applySearch() {
   noResult.style.display = total === 0 ? 'block' : 'none';
 }
 searchInput.addEventListener('input', applySearch);
+exportPhotosCsvBtn.addEventListener('click', exportPhotosCsv);
+exportPhotosJsonBtn.addEventListener('click', exportPhotosJson);
 </script>
 </body>
 </html>
