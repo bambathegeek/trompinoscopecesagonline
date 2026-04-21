@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trombinoscope MBA – CESAG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cesag-green:   #006B3F;
+    --cesag-green-dk:#004D2C;
+    --cesag-green-lt:#E8F5EE;
+    --cesag-orange:  #E87722;
+    --gray-50:  #F8FAFB;
+    --gray-100: #F0F3F6;
+    --gray-150: #E8ECF0;
+    --gray-200: #DFE4E9;
+    --gray-300: #C5CDD5;
+    --gray-400: #9AA5B1;
+    --gray-500: #6B7885;
+    --gray-600: #4A5568;
+    --gray-700: #2D3748;
+    --gray-800: #1A202C;
+    --white:    #FFFFFF;
+    --card-w:   300px;
+    --card-h:   400px;
+    --avatar-sz:84px;
+    --radius:   16px;
+    --radius-sm: 10px;
+    --shadow:   0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.06);
+    --shadow-hover: 0 8px 30px rgba(0,107,63,.14), 0 2px 8px rgba(0,0,0,.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(180deg, #F0F4F1 0%, #E8EDEA 100%);
+    color: var(--gray-800);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .site-header {
+    background: linear-gradient(135deg, var(--cesag-green-dk) 0%, var(--cesag-green) 50%, #0A7A4A 100%);
+    padding: 32px 40px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,0,0,.2);
+  }
+  .header-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .logo-block { display: flex; align-items: center; gap: 18px; }
+  .logo-emblem {
+    width: 56px; height: 56px;
+    background: var(--white);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    overflow: hidden;
+    padding: 8px;
+  }
+  .logo-emblem img { width: 100%; height: 100%; object-fit: contain; }
+  .header-titles h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 2.8vw, 28px);
+    color: var(--white);
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+  .header-titles p {
+    font-size: 12px;
+    color: rgba(255,255,255,.65);
+    margin-top: 4px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+  }
+  .header-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .search-wrap { position: relative; transition: var(--transition); }
+  .search-wrap:focus-within { transform: scale(1.02); }
+  .search-wrap svg {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: rgba(255,255,255,.5); pointer-events: none;
+    transition: var(--transition-fast);
+  }
+  .search-wrap:focus-within svg { color: rgba(255,255,255,.9); }
+  #searchInput {
+    background: rgba(255,255,255,.12);
+    border: 1.5px solid rgba(255,255,255,.22);
+    color: var(--white);
+    border-radius: 28px;
+    padding: 11px 18px 11px 42px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    width: 260px;
+    outline: none;
+    transition: var(--transition-fast);
+    backdrop-filter: blur(10px);
+  }
+  #searchInput::placeholder { color: rgba(255,255,255,.45); font-weight: 300; }
+  #searchInput:focus {
+    background: rgba(255,255,255,.2);
+    border-color: rgba(255,255,255,.5);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.1);
+  }
+  .badge-total {
+    background: rgba(255,255,255,.12);
+    color: var(--white);
+    border-radius: 24px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid rgba(255,255,255,.2);
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+  }
+  #visibleCount { color: #FFD700; font-weight: 700; font-size: 15px; }
+
+  .tabs-bar {
+    background: rgba(255,255,255,.92);
+    border-bottom: 1px solid var(--gray-200);
+    position: sticky;
+    top: 116px;
+    z-index: 90;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    backdrop-filter: blur(16px);
+  }
+  .tabs-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+    padding: 4px 24px;
+    scrollbar-width: none;
+  }
+  .tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-500);
+    border-radius: var(--radius-sm);
+    margin: 4px 0;
+    transition: var(--transition-fast);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  .tab-btn:hover { color: var(--cesag-green); background: var(--cesag-green-lt); }
+  .tab-btn.active {
+    color: var(--cesag-green);
+    background: var(--cesag-green-lt);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,107,63,.12);
+  }
+  .tab-badge {
+    background: var(--gray-150);
+    color: var(--gray-500);
+    border-radius: 12px;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: var(--transition-fast);
+  }
+  .tab-btn.active .tab-badge { background: var(--cesag-green); color: var(--white); }
+
+  .main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 40px 28px 80px;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding: 0 4px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--cesag-green);
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .section-sep {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cesag-green-lt), transparent);
+    border-radius: 2px;
+  }
+  .section-count {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 500;
+    background: var(--gray-100);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+    gap: 24px;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    height: var(--card-h);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+    cursor: default;
+    border: 1px solid var(--gray-100);
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+    border-color: transparent;
+  }
+  .card:hover .card-accent { opacity: 1; height: 4px; }
+  .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--prog-color, var(--cesag-green));
+    opacity: .6;
+    transition: var(--transition-fast);
+    z-index: 2;
+  }
+
+  .card-top {
+    padding: 22px 20px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .avatar {
+    width: var(--avatar-sz);
+    height: var(--avatar-sz);
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--prog-color, var(--cesag-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--white);
+    letter-spacing: 1px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    overflow: hidden;
+    position: relative;
+    border: 3px solid var(--white);
+    outline: 2px solid var(--prog-bg, var(--cesag-green-lt));
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; border-radius: 50%; }
+
+  .card-identity { flex: 1; min-width: 0; padding-top: 4px; }
+  .card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 40px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.2px;
+  }
+  .card-prog-chip {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    background: var(--prog-bg, var(--cesag-green-lt));
+    color: var(--prog-color, var(--cesag-green));
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .card-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gray-150), transparent);
+    margin: 0 20px;
+    flex-shrink: 0;
+  }
+
+  .card-body {
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--gray-700);
+    line-height: 1.45;
+  }
+  .info-row .icon {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--prog-color, var(--cesag-green));
+    opacity: 0.8;
+  }
+  .info-row .val {
+    flex: 1;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: 500;
+  }
+  .info-row .val.single { -webkit-line-clamp: 1; }
+  .info-row .label {
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--gray-400);
+    white-space: nowrap;
+    margin-bottom: 1px;
+  }
+  .profil-row .val {
+    font-size: 11.5px;
+    color: var(--gray-500);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    padding: 12px 20px 16px;
+    background: linear-gradient(180deg, var(--gray-50), var(--white));
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .contact-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--gray-600);
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 22px;
+    padding: 6px 12px;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    transition: var(--transition-fast);
+    cursor: pointer;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .contact-pill:hover {
+    border-color: var(--prog-color, var(--cesag-green));
+    background: var(--prog-bg, var(--cesag-green-lt));
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .contact-pill svg { flex-shrink: 0; color: var(--prog-color, var(--cesag-green)); opacity: 0.7; }
+  .contact-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .contact-pill.whatsapp {
+    flex: 0 0 auto;
+    min-width: 100px;
+    background: linear-gradient(135deg, #25D36608, #25D36615);
+    border-color: #25D36630;
+  }
+  .contact-pill.whatsapp:hover {
+    border-color: #25D366;
+    background: linear-gradient(135deg, #25D36615, #25D36625);
+    box-shadow: 0 2px 12px rgba(37,211,102,.15);
+  }
+  .contact-pill.whatsapp svg { color: #25D366; }
+
+  .contact-pill.email {
+    position: relative;
+    cursor: copy;
+  }
+  .contact-pill.email::after {
+    content: 'Copié !';
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    background: var(--gray-800);
+    color: white;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transition: var(--transition-fast);
+    pointer-events: none;
+  }
+  .contact-pill.email.copied::after {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  .contact-pill.email:hover {
+    border-color: #4A90D9;
+    background: linear-gradient(135deg, #4A90D908, #4A90D915);
+  }
+  .contact-pill.email svg { color: #4A90D9; }
+
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--gray-400);
+  }
+  .empty-state svg { opacity: .25; margin-bottom: 20px; }
+  .empty-state p { font-size: 16px; font-weight: 400; }
+
+  .prog-section { display: none; }
+  .prog-section.visible { display: block; }
+  .prog-section + .prog-section.visible { margin-top: 56px; }
+
+  #noResult {
+    display: none;
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--gray-400);
+    font-size: 16px;
+  }
+  #noResult svg { opacity: .2; margin-bottom: 20px; }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+  @media (max-width: 768px) {
+    :root { --card-w: 260px; --card-h: 380px; --avatar-sz: 72px; }
+    .site-header { padding: 20px 16px 16px; top: 0; position: relative; }
+    .tabs-bar { top: 0; }
+    .main { padding: 24px 14px 50px; }
+    #searchInput { width: 180px; }
+    .section-title { font-size: 20px; }
+    .card-name { font-size: 14px; }
+  }
+  @media (max-width: 480px) {
+    :root { --card-w: 100%; }
+    .cards-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .card-footer { flex-direction: column; gap: 6px; }
+    .contact-pill { width: 100%; }
+    .contact-pill.whatsapp { min-width: unset; }
+    .avatar { width: 64px; height: 64px; font-size: 20px; }
+    .card-top { padding: 16px 14px 12px; }
+    .card-body { padding: 10px 14px; }
+    .card-footer { padding: 10px 14px 14px; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card { animation: fadeInUp 0.5s ease-out forwards; }
+  .prog-section.visible .card:nth-child(1) { animation-delay: 0.02s; }
+  .prog-section.visible .card:nth-child(2) { animation-delay: 0.04s; }
+  .prog-section.visible .card:nth-child(3) { animation-delay: 0.06s; }
+  .prog-section.visible .card:nth-child(4) { animation-delay: 0.08s; }
+  .prog-section.visible .card:nth-child(5) { animation-delay: 0.10s; }
+  .prog-section.visible .card:nth-child(6) { animation-delay: 0.12s; }
+  .prog-section.visible .card:nth-child(7) { animation-delay: 0.14s; }
+  .prog-section.visible .card:nth-child(8) { animation-delay: 0.16s; }
+  .prog-section.visible .card:nth-child(9) { animation-delay: 0.18s; }
+  .prog-section.visible .card:nth-child(10) { animation-delay: 0.20s; }
+  .prog-section.visible .card:nth-child(n+11) { animation-delay: 0.22s; }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="logo-emblem">
+        <img src="https://kimi-web-img.moonshot.cn/img/lanation.bj/1f5f4d599886890bba0f80833e5c80fb1bfe1515.webp" alt="CESAG" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=font-family:Playfair Display;font-size:22px;color:#006B3F;font-weight:700;>C</span>'">
+      </div>
+      <div class="header-titles">
+        <h1>Trombinoscope MBA — CESAG</h1>
+        <p>Centre Africain d'Études Supérieures en Gestion · Dakar</p>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Rechercher un auditeur…" autocomplete="off">
+      </div>
+      <div class="badge-total"><span id="visibleCount">132</span> auditeur(s)</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs-bar" id="tabsBar">
+  <div class="tabs-inner" id="tabsInner"></div>
+</nav>
+
+<main class="main" id="main">
+  <div id="noResult">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <p>Aucun résultat pour cette recherche.</p>
+  </div>
+</main>
+
+<script>
+const DATA = [{"id":1,"nom":"THIMBO","prenom":"Elhadji Amadou","nomComplet":"Elhadji Amadou THIMBO","programme":"MBA GP 25 26 Cohorte 1","profil":"MBA en Gestion des Services de Santé, Master 2 en Finance et Gestion Publique. planificateur au Mini…","email":"telhadjamadou@gmail.com","whatsapp":"00221775506346","poste":"Non renseigné","pays":"Non renseigné","initiales":"ET"},{"id":2,"nom":"FALL","prenom":"Amsatou","nomComplet":"Amsatou FALL","programme":"MBA AG 25 26 Cohorte 1","profil":"Maitrise sciences éco ucad, Chef des services administratifs uad, professionnel","email":"amsatou.fall1@uadb.edu.sn","whatsapp":"774149402","poste":"Non renseigné","pays":"Non renseigné","initiales":"AF"},{"id":3,"nom":"SONKO","prenom":"Fatou Bintou","nomComplet":"Fatou Bintou SONKO","programme":"MBA GP 25 26 Cohorte 1","profil":"Master 2 en développement rural et coopération","email":"fabyntou@yahoo.fr","whatsapp":"(+221775390606)","poste":"Non renseigné","pays":"Non renseigné","initiales":"FS"},{"id":4,"nom":"DIOP","prenom":"Mouhamadou Bira Yamb","nomComplet":"Mouhamadou Bira Yamb DIOP","programme":"MBA AG 25 26 Cohorte 1","profil":"Architecte IT senior avec 17 ans d'expérience dans la gestion d'infrastructures critiques et la cybe…","email":"bira.netc@gmail.com","whatsapp":"+221 770999180","poste":"Non renseigné","pays":"Non renseigné","initiales":"MD"},{"id":5,"nom":"KOBON","prenom":"ARMANDE URSELINE","nomComplet":"ARMANDE URSELINE KOBON","programme":"MBA GP 25 26 Cohorte 1","profil":"MAITRISE EN ECONOMIE PUBLIQUE/ DIPLOME DE L'INSTITUT DES TECHNIQUES BANCAIRES/ RESPONSABLE D'AGENCE …","email":"armandeurselinekobon@gmail.com","whatsapp":"002250708543231","poste":"Non renseigné","pays":"Non renseigné","initiales":"AK"},{"id":6,"nom":"Faye","prenom":"Ibrahima","nomComplet":"Ibrahima Faye","programme":"MBA GP 25 26 Cohorte 1","profil":"Master, enseignement, professeur","email":"fayebira2017@gmail.com","whatsapp":"781153322","poste":"Non renseigné","pays":"Non renseigné","initiales":"IF"},{"id":7,"nom":"DIOUF","prenom":"Ndiaya","nomComplet":"Ndiaya DIOUF","programme":"MBA GP 25 26 Cohorte 1","profil":"Chef de Division des Études (Ministére de l'Emploi et de la Formation Professionnelle et Technique)","email":"ndiayadiouf@cesag.edu.sn","whatsapp":"77 564 31 14","poste":"Non renseigné","pays":"Non renseigné","initiales":"ND"},{"id":8,"nom":"TRAORE","prenom":"Bafing","nomComplet":"Bafing TRAORE","programme":"MBA AG 25 26 Cohorte 1","profil":"Maîtrise en économie (AQPE), Responsable Administratif et Financier, Gestion de l'ONG  ADD","email":"bafingtraore@cesag.edu.sn","whatsapp":"+22379090540","poste":"Non renseigné","pays":"Non renseigné","initiales":"BT"},{"id":9,"nom":"ABLAN EPOUSE YODE","prenom":"CARINE ESTELLE","nomComplet":"CARINE ESTELLE ABLAN EPOUSE YODE","programme":"MBA AG 25 26 Cohorte 1","profil":"MASTER EN AUDIT ET CONTROLE DE GESTION","email":"ablancarine2@gmail.com","whatsapp":"01 01 67 87 97 / 07 49 29 17 98","poste":"Non renseigné","pays":"Non renseigné","initiales":"CA"},{"id":10,"nom":"Faye","prenom":"Ibrahima","nomComplet":"Ibrahima Faye","programme":"MBA GP 25 26 Cohorte 1","profil":"Master","email":"fayebira2017@gmail.com","whatsapp":"781153322","poste":"Non renseigné","pays":"Non renseigné","initiales":"IF"},{"id":11,"nom":"OUEDRAOGO","prenom":"Pouspoko Nicole Armelle","nomComplet":"Pouspoko Nicole Armelle OUEDRAOGO","programme":"MBA AG 25 26 Cohorte 1","profil":"Certificats en marchés publiques-innovation et intelligence économique-logistique-approvisionnement,…","email":"wedarmelle@gmail.com","whatsapp":"+22670288262","poste":"Non renseigné","pays":"Non renseigné","initiales":"PO"},{"id":12,"nom":"THIAW","prenom":"philomene Ndella","nomComplet":"philomene Ndella THIAW","programme":"MBA AG 25 26 Cohorte 1","profil":"Master  2 en gestion  de projet en cour","email":"Odile2382@gmail.com","whatsapp":"774319846","poste":"Non renseigné","pays":"Non renseigné","initiales":"PT"},{"id":13,"nom":"Moussa Ibrahim","prenom":"Aminatou","nomComplet":"Aminatou Moussa Ibrahim","programme":"MBA AG 25 26 Cohorte 1","profil":"MBA Audit et Controle de Gestion (ISM-2013) / Regional Grants Specialist USAID/SRPS at DAI LLC Ghana…","email":"amylobo1@hotmail.com or amipoulloniger@gmail.com","whatsapp":"+227 90254224","poste":"Non renseigné","pays":"Non renseigné","initiales":"AM"},{"id":14,"nom":"DOUMBOUYA","prenom":"NDEYE KHADY","nomComplet":"NDEYE KHADY DOUMBOUYA","programme":"MBA GP 25 26 Cohorte 1","profil":"INGENIEUR DE CONCEPTION EN GENIE ELECTRIQUE, TRAVAIL A LA SENELEC","email":"ndeyekhady.doumbouya@senelec.sn","whatsapp":"00221778195593","poste":"Non renseigné","pays":"Non renseigné","initiales":"ND"},{"id":15,"nom":"THIAW","prenom":"Philomene Ndella","nomComplet":"Philomene Ndella THIAW","programme":"MBA AG 25 26 Cohorte 1","profil":"master é en gestion de projet en cours","email":"odile2382@gmail.com","whatsapp":"+221774319846","poste":"Non renseigné","pays":"Non renseigné","initiales":"PT"},{"id":16,"nom":"ESSE","prenom":"SIALLOU FLORENT MARTIAL","nomComplet":"SIALLOU FLORENT MARTIAL ESSE","programme":"MBA GP 25 26 Cohorte 1","profil":"MASTER 2 EN GENIE CIVIL ET INFRASTRUCTURES","email":"essesialou.florent@yahoo.fr","whatsapp":"0777667169","poste":"Non renseigné","pays":"Non renseigné","initiales":"SE"},{"id":17,"nom":"LO","prenom":"Awa","nomComplet":"Awa LO","programme":"MBA GP 25 26 Cohorte 1","profil":"Ingénieur Agronome, en service au Ministère de l'Agriculture de la Souveraineté alimentaire et de l'…","email":"awalo58@yahoo.fr","whatsapp":"776614594","poste":"Non renseigné","pays":"Non renseigné","initiales":"AL"},{"id":18,"nom":"MBODJI","prenom":"ADJARATOU ALASSANE","nomComplet":"ADJARATOU ALASSANE MBODJI","programme":"MBA GP 25 26 Cohorte 1","profil":"Master II Agronomie - Agroalimentaire Spécialisation Systèmes agraire tropicaux et gestion du dévelo…","email":"adjambodji@hotmail.com","whatsapp":"+221775319971","poste":"Non renseigné","pays":"Non renseigné","initiales":"AM"},{"id":19,"nom":"FLE","prenom":"LEHENOIN DONALD GREGOIRE","nomComplet":"LEHENOIN DONALD GREGOIRE FLE","programme":"MBA AG 25 26 Cohorte 1","profil":"Maitrise en Criminologie, Cadre Supérieur, Environnement","email":"fle.lehenoin.donald@gmail.com","whatsapp":"+225 0748671359","poste":"Non renseigné","pays":"Non renseigné","initiales":"LF"},{"id":20,"nom":"LECOR","prenom":"Cheikh Omar Tall","nomComplet":"Cheikh Omar Tall LECOR","programme":"MBA AG 25 26 Cohorte 1","profil":"Diplôme d'un master II en pratique du développement (UCAD/FASEG); Assistant en Suivi Evaluation au n…","email":"cheikhlecor@gmail.com","whatsapp":"774598761","poste":"Non renseigné","pays":"Non renseigné","initiales":"CL"},{"id":21,"nom":"DAGO","prenom":"Moko Marie Ange Armelle","nomComplet":"Moko Marie Ange Armelle DAGO","programme":"MBA GP 25 26 Cohorte 1","profil":"Master Droit Banque Finance et Assurance","email":"angeme2909@gmail.com","whatsapp":"+221771490059","poste":"Non renseigné","pays":"Non renseigné","initiales":"MD"},{"id":22,"nom":"NIANG","prenom":"Fatoumatou Binetou Bineta","nomComplet":"Fatoumatou Binetou Bineta NIANG","programme":"MBA AG 25 26 Cohorte 1","profil":"Management des Entreprises, Assistante du PCA","email":"fbniang@petrosen.sn","whatsapp":"77647 50 45","poste":"Non renseigné","pays":"Non renseigné","initiales":"FN"},{"id":23,"nom":"TANO","prenom":"Ahou Kongo Gisèle","nomComplet":"Ahou Kongo Gisèle TANO","programme":"MBA GP 25 26 Cohorte 1","profil":"Maitrise Sciences de Gestion","email":"giseletano17@gmail.com","whatsapp":"+22507317984","poste":"Non renseigné","pays":"Non renseigné","initiales":"AT"},{"id":24,"nom":"Faye","prenom":"Ibrahima","nomComplet":"Ibrahima Faye","programme":"MBA GP 25 26 Cohorte 1","profil":"Master","email":"fayebira2017@gmail.com","whatsapp":"781153322","poste":"Non renseigné","pays":"Non renseigné","initiales":"IF"},{"id":25,"nom":"ADOUKO","prenom":"HYACINTHE ABLE","nomComplet":"HYACINTHE ABLE ADOUKO","programme":"MBA GP 25 26 Cohorte 1","profil":"Master","email":"hadouko@gmail.com","whatsapp":"+2250714405003","poste":"Non renseigné","pays":"Non renseigné","initiales":"HA"},{"id":26,"nom":"Sonko","prenom":"Daouda","nomComplet":"Daouda Sonko","programme":"MBA GP 25 26 Cohorte 1","profil":"CAEM - Enseignant(Professeur de français)","email":"sonkodaouda45@gmail.com","whatsapp":"775136330","poste":"Non renseigné","pays":"Non renseigné","initiales":"DS"},{"id":27,"nom":"DIOUF","prenom":"Ndiaya","nomComplet":"Ndiaya DIOUF","programme":"MBA GP 25 26 Cohorte 1","profil":"Maitrise en Sciences Economies option Gestions des Entreprises, chef de la Division des Etudes à la …","email":"ndiaya1983@gmail.com","whatsapp":"775643114","poste":"Non renseigné","pays":"Non renseigné","initiales":"ND"},{"id":28,"nom":"THIMBO","prenom":"Elhadji Amadou","nomComplet":"Elhadji Amadou THIMBO","programme":"MBA GP 25 26 Cohorte 1","profil":"Master 2 en Finances et Gestion Publiques / MBA en Gestion des Services de Santé","email":"telhadjamadou@gmail.com","whatsapp":"00221775506346","poste":"Non renseigné","pays":"Non renseigné","initiales":"ET"},{"id":29,"nom":"THIMBO","prenom":"Elhadji Amadou","nomComplet":"Elhadji Amadou THIMBO","programme":"MBA GP 25 26 Cohorte 1","profil":"Master 2 Finances et Gestion Publique/ MBA en Gestion des Services de Santé, Planificateur Ministère…","email":"telhadjamadou@gmail.com","whatsapp":"00221775506346","poste":"Non renseigné","pays":"Non renseigné","initiales":"ET"},{"id":30,"nom":"PAKPAM","prenom":"Essomana","nomComplet":"Essomana PAKPAM","programme":"MBA AG 25 26 Cohorte 1","profil":"Master 2 Comptabilité, Control, Audit, actuellement DAF au l'EISMV de Dakar","email":"epakpam@yahoo.fr / eric3000pakpam6@gmail.com","whatsapp":"00221 776832176","poste":"Non renseigné","pays":"Non renseigné","initiales":"EP"},{"id":31,"nom":"NIANG","prenom":"FATOUMATOU BINETOU BINETA","nomComplet":"FATOUMATOU BINETOU BINETA NIANG","programme":"MBA AG 25 26 Cohorte 1","profil":"MASTER EN MANAGEMENT DES ENTREPRISE","email":"fbniang@petrosen.sn","whatsapp":"00221 77 647 50 45","poste":"Non renseigné","pays":"Non renseigné","initiales":"FN"},{"id":32,"nom":"Faye","prenom":"Ibrahima","nomComplet":"Ibrahima Faye","programme":"MBA GP 25 26 Cohorte 1","profil":"Master","email":"fayebira2017@gmail.com","whatsapp":"781153322","poste":"Non renseigné","pays":"Non renseigné","initiales":"IF"},{"id":33,"nom":"DIOP","prenom":"AYA","nomComplet":"AYA DIOP","programme":"MBA AG 25 26 Cohorte 1","profil":"Titulaire d'une licence en Marketing vente et sur le point de valider un master en marketing digital…","email":"papayadiop3@gmail.com","whatsapp":"77 529 71 74","poste":"Non renseigné","pays":"Non renseigné","initiales":"AD"},{"id":34,"nom":"EZAN","prenom":"Mame Diarra Bousso","nomComplet":"Mame Diarra Bousso EZAN","programme":"MBA GP 25 26 Cohorte 1","profil":"DIC Génie Civil","email":"ezanbousso@gmail.com","whatsapp":"778435905","poste":"Non renseigné","pays":"Non renseigné","initiales":"ME"},{"id":35,"nom":"Ablan Épouse YODE","prenom":"Carine Estelle","nomComplet":"Carine Estelle Ablan Épouse YODE","programme":"MBA GP 25 26 Cohorte 1","profil":"Chargée d'études","email":"ablancarine2@gmail.com","whatsapp":"01 01 67 87 97","poste":"Non renseigné","pays":"Non renseigné","initiales":"CA"},{"id":36,"nom":"DAGO","prenom":"Moko Marie Ange Armelle","nomComplet":"Moko Marie Ange Armelle DAGO","programme":"MBA GP 25 26 Cohorte 1","profil":"MDFA","email":"mokodago@cesag.edu.sn","whatsapp":"+221771490059","poste":"Non renseigné","pays":"Non renseigné","initiales":"MD"},{"id":37,"nom":"THIMBO","prenom":"Elhadji Amadou","nomComplet":"Elhadji Amadou THIMBO","programme":"MBA GP Cohorte 1","profil":"MBA GSS CESAG, MASTER II EN FINANCE ET GESTION PUBLIQUE ISF","email":"telhadjamadou@gmail.com","whatsapp":"00221775506346","poste":"Agent vérificateur Ministère des finances et du budget","pays":"Sénégal","initiales":"ET"},{"id":38,"nom":"DIAGNE","prenom":"Bassirou","nomComplet":"Bassirou DIAGNE","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Master en SIC, Responsable de la Cellule Planification, du Suivi et Evaluation","email":"diagnebassirou88@gmail.com","whatsapp":"77 165 98 82","poste":"Responsable de la Cellule Planification, du Suivi et Evaluation","pays":"Sénégal","initiales":"BD"},{"id":39,"nom":"NDIAYE","prenom":"ABDOUL DIALIL","nomComplet":"ABDOUL DIALIL NDIAYE","programme":"MBA GP Cohorte 1","profil":"MASTER 2 EN AUDIT ET CONTROLE DE GESTION","email":"abdouldialilndiaye@cesag.edu.sn","whatsapp":"+221779235953","poste":"Responsable Administratif et Financier","pays":"Sénégal","initiales":"AN"},{"id":40,"nom":"Sonko","prenom":"Daouda","nomComplet":"Daouda Sonko","programme":"MBA GP Cohorte 1","profil":"CAEM, Enseignant, Professeur de français","email":"sonkodaouda45@gmail.com","whatsapp":"775136330","poste":"Enseignant","pays":"Sénégal","initiales":"DS"},{"id":41,"nom":"FALL","prenom":"Khar Macodou","nomComplet":"Khar Macodou FALL","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"Master 2 Science pour 'Ingenieur Genie Mecanique","email":"kharmacodou@gmail.com","whatsapp":"(+221) 77 281 56 58","poste":"Chef de Division Etudes et Developpement Reseau ferroviaire","pays":"Senegal","initiales":"KF"},{"id":42,"nom":"Ngassa Tandja","prenom":"Crepin","nomComplet":"Crepin Ngassa Tandja","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"Ingénieur en science des données, Master en Santé Publique Spécialisté Biostatistique et économétrie…","email":"ngassacrepin1@gmail.com","whatsapp":"+237677241079","poste":"Spécialiste de changement sociale et de comportement","pays":"République Centrafricaine","initiales":"CN"},{"id":43,"nom":"TRAORE","prenom":"Bafing","nomComplet":"Bafing TRAORE","programme":"MBA AG  Cohorte 1","profil":"Maîtrise en Analyse Quantitative et Politique Economique","email":"bafingtraore@cesag.edu.sn","whatsapp":"+22379 09 05 40","poste":"Responsable Administrative et Financier","pays":"Mali","initiales":"BT"},{"id":44,"nom":"Azilinon epouse de  souza","prenom":"Emeline Lydie","nomComplet":"Emeline Lydie Azilinon epouse de  souza","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Audit","email":"Lydieazilinon@gmail.com","whatsapp":"+221 77 703 86 01","poste":"Fianance associate","pays":"Senegal","initiales":"EA"},{"id":45,"nom":"NIANG","prenom":"ELHADJI","nomComplet":"ELHADJI NIANG","programme":"MBA MSCH","profil":"MASTER","email":"seydinaalioune365@gmail.com","whatsapp":"771081894","poste":"CONTROLEUR DE GESTION","pays":"SENEGAL","initiales":"EN"},{"id":46,"nom":"DONALD GREGOIRE","prenom":"FLE","nomComplet":"FLE DONALD GREGOIRE","programme":"MBA GP Cohorte 1","profil":"Maitrise Appliquée en Criminologie","email":"fle.lehenoin.donald@gmail.com","whatsapp":"07 48 67 13 59","poste":"Directeur du Développement International","pays":"Côte d'Ivoire","initiales":"FD"},{"id":47,"nom":"ABOUBACAR IBRAH","prenom":"Ismail","nomComplet":"Ismail ABOUBACAR IBRAH","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"2itcniger@gmail.com","email":"iibrah@yahoo.fr","whatsapp":"+22796880760","poste":"Consultant","pays":"Niger","initiales":"IA"},{"id":48,"nom":"ESSE","prenom":"SIALLOU FLORENT MARTIAL","nomComplet":"SIALLOU FLORENT MARTIAL ESSE","programme":"MBA GP Cohorte 1","profil":"Ingénieur TP","email":"essesialou.florent@yahoo.fr","whatsapp":"+225 07 77 66 71 69","poste":"CHEF DE SERVICE BRIGADE DE CONTROLE DES CONSTRUCTIONS","pays":"COTE D'IVOIRE","initiales":"SE"},{"id":49,"nom":"FERNANDES BASSANGUÊ","prenom":"Leonardo","nomComplet":"Leonardo FERNANDES BASSANGUÊ","programme":"MBA ACG","profil":"Maitrise en Sciences de Gestion Spécialité : Comptabilité (Bac + 4), Projet d'Appui au Développement…","email":"Quartier 12 Septembre Antula Bono, Bissau, Republique de la Guinée Bissau","whatsapp":"(+245) 96 662 36 72","poste":"Comptable","pays":"Guinée Bissau","initiales":"LF"},{"id":50,"nom":"TUHO","prenom":"Kinambin","nomComplet":"Kinambin TUHO","programme":"MBA IGF","profil":"Ingénieur Agro Alimentaire - Coordonnateur Pédagogique et Orientation dans un Groupe Scolaire Privé …","email":"kinambin@gmail.com","whatsapp":"+225 07 49 76 0852","poste":"Coordonnateur Pédagogique et Orientation","pays":"Côte-d'Ivoire","initiales":"KT"},{"id":51,"nom":"TOU","prenom":"MOUMOUNI","nomComplet":"MOUMOUNI TOU","programme":"MBA ACG","profil":"Master 2 en ACG, Comptable en activité","email":"toumoumouni@gmail.com","whatsapp":"+2250768669628","poste":"Comptable","pays":"Côte d'Ivoire","initiales":"MT"},{"id":52,"nom":"TOKA","prenom":"Albert Rodolphe","nomComplet":"Albert Rodolphe TOKA","programme":"MBA IGF","profil":"Madame, Monsieur, Titulaire d'une maitrise en droit avec plus de douze années d'expérience dans la f…","email":"tokarodolphe@hotmail.com","whatsapp":"+225 07 07 75 89 10","poste":"Spécialiste Renforcement des capacités et RH / PIF2","pays":"Cote d'Ivoire","initiales":"AT"},{"id":53,"nom":"SINDE","prenom":"YAN MAUREL","nomComplet":"YAN MAUREL SINDE","programme":"MBA ACG","profil":"Master 2 Finances: Banque et Assurance","email":"sindeyanmaurel@gmail.com","whatsapp":"+2250758139465","poste":"COMPTABLE TECHNIQUE","pays":"Côte d'Ivoire","initiales":"YS"},{"id":54,"nom":"AMETSA","prenom":"Ignéza","nomComplet":"Ignéza AMETSA","programme":"MBA ACG","profil":"Maitrise ,Domaine humanitaire, urgences","email":"ignezaametsa@yahoo.fr","whatsapp":"0022891911184","poste":"Chargé du Budget et Programmation","pays":"Togo","initiales":"IA"},{"id":55,"nom":"KONATE","prenom":"FATOUMATA","nomComplet":"FATOUMATA KONATE","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"Détentrice MSTCF,  travaillant au sein de la Banque  Mondiale","email":"Fatoumatakk@gmail.com","whatsapp":"+22373189960","poste":"Finance Officer Worldbank Mali","pays":"Mali","initiales":"FK"},{"id":56,"nom":"TOURE","prenom":"BOUBACAR","nomComplet":"BOUBACAR TOURE","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"Master 2 Économie et Droit, option: Marketing et Direction des équipes commerciales, Commercial","email":"0022671201017","whatsapp":"0022671201017","poste":"DIRECTEUR D'AGENCE","pays":"Burkina Faso","initiales":"BT"},{"id":57,"nom":"KOUAO","prenom":"Saint-Raoul","nomComplet":"Saint-Raoul KOUAO","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Dernier diplôme : Ingénieur en Télécommunications (INP-HB) – Expert certifié PgMP®, PMP® et Project …","email":"raoul.kouao@gmail.com","whatsapp":"+2250505055085","poste":"Senior Project Manager","pays":"Côte d'Ivoire","initiales":"SK"},{"id":58,"nom":"NDOYE","prenom":"Mame Awa","nomComplet":"Mame Awa NDOYE","programme":"MBA GP Cohorte 1","profil":"Docteur d'Etat en Médecine directeur de la qualité de la saécurité et de l'hygiene publique au Minis…","email":"mawandoye@outlook.fr","whatsapp":"+221776363672","poste":"directeur de la qualité de la saécurité et de l'hygiene publique au Ministère de la Santé au Sénégal","pays":"Sénégal","initiales":"MN"},{"id":59,"nom":"FAYE","prenom":"Ibrahima","nomComplet":"Ibrahima FAYE","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"master2 , enseignant","email":"fayebira2017@gmail.com","whatsapp":"781153322","poste":"Professeur","pays":"Sénégal","initiales":"IF"},{"id":60,"nom":"DIOUF","prenom":"Mouhamadou Fada","nomComplet":"Mouhamadou Fada DIOUF","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Maitrise en analyse et politique Economique","email":"mouhamadoufadadiouf@gmail.com","whatsapp":"772797016","poste":"responsable suivi","pays":"SENEGAL","initiales":"MD"},{"id":61,"nom":"SACRAMENTO","prenom":"Morènikè Cathia","nomComplet":"Morènikè Cathia SACRAMENTO","programme":"MBA MCID","profil":"Master Gestion de projet; consultante en Suivi Evaluation","email":"ayideecathia@gmail.com","whatsapp":"0022967558245","poste":"Consultante suivi evaluation","pays":"Bénin","initiales":"MS"},{"id":62,"nom":"DODOU","prenom":"Marie Thérèse Valle Pri","nomComplet":"Marie Thérèse Valle Pri DODOU","programme":"MBA ACG","profil":"Master 2 en sociologie de l'économie et de l'emploi","email":"dodoutherese@gmail.com","whatsapp":"+225 0171962021","poste":"Chargé de gestion de projet et suivi-évaluation","pays":"Côte d'Ivoire","initiales":"MD"},{"id":63,"nom":"Thiam","prenom":"Mouhamadou","nomComplet":"Mouhamadou Thiam","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Diplôme d'études approfondies en sociologie du développement (Bac+5), Chef division partenariat et c…","email":"mouhathiam1@gmail.com","whatsapp":"+221775511186","poste":"Chef division partenariat et coopération au Conseil Départemental de Kanel","pays":"Sénégal","initiales":"MT"},{"id":64,"nom":"Diop","prenom":"Baye Samba","nomComplet":"Baye Samba Diop","programme":"MBA MEE","profil":"Doctorat en droit","email":"bayesambadiop@edu.cesag.sn","whatsapp":"221765290473","poste":"Directeur juridique ARCOP","pays":"Sénégal","initiales":"BD"},{"id":65,"nom":"FALL","prenom":"Rokhaya","nomComplet":"Rokhaya FALL","programme":"MBA MEE","profil":"Ingénieure en Génie électrique","email":"rookhaya.fall@gmail.com","whatsapp":"+221773106724","poste":"Ingénieure Travaux Energie Renouvelable","pays":"Sénégal","initiales":"RF"},{"id":66,"nom":"BABDIANE","prenom":"Christelle","nomComplet":"Christelle BABDIANE","programme":"MBA MEE","profil":"Ingénieur en Télécommunication et Réseaux - Responsable QHSE - Manageur des formations","email":"badianechrist@gmail.com","whatsapp":"+221771532007","poste":"Responsable QHSE  et Manageur des formations","pays":"Sénégal","initiales":"CB"},{"id":67,"nom":"Kouadio","prenom":"Lynda Orphée","nomComplet":"Lynda Orphée Kouadio","programme":"MBA IGF","profil":"Master en Recréologie","email":"orphelyndak@gmail.com","whatsapp":"+2250779033102","poste":"Enseignante en Récréologie à l'institut de la jeunesse et des sports","pays":"Cote d'ivoire","initiales":"LK"},{"id":68,"nom":"faye","prenom":"Sokhna oumou","nomComplet":"Sokhna oumou faye","programme":"MBA MEE","profil":"Ingénieur en chimie-biologie option environnement Master 2","email":"sokhnaoumoufaye@gmail.com","whatsapp":"+221775079664","poste":"Responsable ESG","pays":"Sénégal","initiales":"SF"},{"id":69,"nom":"SIDIBE","prenom":"Bou","nomComplet":"Bou SIDIBE","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Ingénieur en Génie Industriel","email":"bousidibe09@outlook.com","whatsapp":"+22662226997","poste":"Chef de la Division de l'Amélioration du Climat des Affaires à la Commission de l'UEMOA","pays":"Burkina Faso","initiales":"BS"},{"id":70,"nom":"KONE","prenom":"FANTA","nomComplet":"FANTA KONE","programme":"MBA ACG","profil":"MASTER1 ACG, COMPTABLE","email":"konefanta5904@gmail.com","whatsapp":"+2250759778539","poste":"COMPTABLE","pays":"COTE D'IVOIRE","initiales":"FK"},{"id":71,"nom":"SORO","prenom":"Aminata","nomComplet":"Aminata SORO","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"MATRISE EN DROIT","email":"aminatanounaferisoro@gmail.com","whatsapp":"+905315189608","poste":"AUCUN","pays":"COTE D IVOIRE","initiales":"AS"},{"id":72,"nom":"YAO Epouse KOFFI","prenom":"N'gbesso Josée","nomComplet":"N'gbesso Josée YAO Epouse KOFFI","programme":"MBA MEE","profil":"Doctorat de Physique, Enseignante-chercheure, Enseignement et recherche en physique à l'université","email":"25 BP 2144 ABIDJAN 25","whatsapp":"002250708050817","poste":"Enseignante-chercheure","pays":"Côte d'Ivoire","initiales":"NY"},{"id":73,"nom":"NGOM","prenom":"Papa Serigne","nomComplet":"Papa Serigne NGOM","programme":"MBA ACG","profil":"Maîtrise en gestion des entreprises, fonctionnaire des douanes, traitement des demandes d'exonératio…","email":"s_ngom@yahoo.fr","whatsapp":"+221707608834","poste":"Chef de section au BFI/DFPE/DGD","pays":"Senegal","initiales":"PN"},{"id":74,"nom":"Ali Barma","prenom":"Abdoul Rachid","nomComplet":"Abdoul Rachid Ali Barma","programme":"MBA MEE","profil":"Ingénieur des Mines et de l'Industrie","email":"barmarachide@gmail.com","whatsapp":"+22799145648","poste":"DQHSE","pays":"Niger","initiales":"AA"},{"id":75,"nom":"KOUAO","prenom":"Saint Raoul Ahi","nomComplet":"Saint Raoul Ahi KOUAO","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Ingénieur en Télécommunications (INP-HB, 2012) et auditeur du MBA Gestion de Projets (CESAG), je sui…","email":"raoul.kouao@gmail.com","whatsapp":"+2250505055085","poste":"Chef de projet sénior  |  Infrastructures numériques & Transformation","pays":"CÔTE D'IVOIRE","initiales":"SK"},{"id":76,"nom":"SENGHOR","prenom":"Mamadou","nomComplet":"Mamadou SENGHOR","programme":"MBA IGF","profil":"Maitrise en Sciences de Gestion","email":"senghr0@gmail.com","whatsapp":"+221775392257","poste":"Responsable des Etudes","pays":"Sénégal","initiales":"MS"},{"id":77,"nom":"SANKHARE","prenom":"Cheikhou","nomComplet":"Cheikhou SANKHARE","programme":"MBA MEE","profil":"Diplôme d'ingénieur Technologue en Génie, professeur de physique chimie au lycée et Génie civil","email":"sankhareprof@gmail.com","whatsapp":"772162310","poste":"Professeur de Physique Chimie au lycée Malick Sy de Thies/Sénégal","pays":"Sénégal","initiales":"CS"},{"id":78,"nom":"DIOUF","prenom":"Coura Mbissane Gnilane","nomComplet":"Coura Mbissane Gnilane DIOUF","programme":"MBA IGF","profil":"Magistrat","email":"pr.courambissane@gmail.com","whatsapp":"+221 776577322","poste":"Directrice de la formation initiale du Centre de Formation judiciaire","pays":"Sénégal","initiales":"CD"},{"id":79,"nom":"ORÉGA","prenom":"Allaba Carine","nomComplet":"Allaba Carine ORÉGA","programme":"MBA MSCH","profil":"En reconversion, à la recherche d'un stage.","email":"carineoega@gmail.com","whatsapp":"+221 77 193 21 94","poste":"À la recherche d'un stage en RH","pays":"Sénégal","initiales":"AO"},{"id":80,"nom":"TRAORE","prenom":"Bafing","nomComplet":"Bafing TRAORE","programme":"MBA AG  Cohorte 1","profil":"Maîtrise AQPE (Analyse Quantitatif et Politique Economique) ; Responsable Administratif et Financier…","email":"bafingtraore@cesag.edu.sn","whatsapp":"+22379090540","poste":"Responsable Administratif et Financier de l'ONG ADD","pays":"Mali","initiales":"BT"},{"id":81,"nom":"THIMBO","prenom":"Elhaddji Amadou THIMBO","nomComplet":"Elhaddji Amadou THIMBO THIMBO","programme":"MBA GP Cohorte 1","profil":"Master II en finances publiques à l'ISF, MBA en gestion des serviices de santé au CESAG","email":"05 station 10 Golf Océan","whatsapp":"00221775506346","poste":"Planificateur, agent vérificateur Direction du Contrôle budgétaire/DGB/ Ministère des finances et du Budget","pays":"Sénégal","initiales":"ET"},{"id":82,"nom":"NIANG","prenom":"FATOUMATOU BINETOU BINTA","nomComplet":"FATOUMATOU BINETOU BINTA NIANG","programme":"MBA AG  Cohorte 1","profil":"MASTER 2 EN MANAGEMENT DES ENTREPRISES _ ASSISTANTE PARTICULIERE DU PCA DU GROUPE PETROSEN","email":"fbniang@petrosen.sn","whatsapp":"00221 77 647 50 45","poste":"ASSISTANTE PARTICULIERE DU PCA DU GROUPE PETROSEN","pays":"SENEGAL","initiales":"FN"},{"id":83,"nom":"FALL","prenom":"AMSATOU","nomComplet":"AMSATOU FALL","programme":"MBA AG  Cohorte 1","profil":"Maitrise sciences éco, CSA à l'UAD","email":"amsatou.fall1@uadb.edu.sn","whatsapp":"77 414 94 02","poste":"Che des services administratifs","pays":"sénégal","initiales":"AF"},{"id":84,"nom":"LO","prenom":"Awa","nomComplet":"Awa LO","programme":"MBA GP Cohorte 1","profil":"Ingénieur Agronome","email":"awalo58@yahoo.fr","whatsapp":"776614594","poste":"Agent fonctionnaire au Ministère en charge de l'Agriculture","pays":"Sénégal","initiales":"AL"},{"id":85,"nom":"SY","prenom":"Mansour","nomComplet":"Mansour SY","programme":"MBA MSCH","profil":"Maitrise en Droit International public-Master 1 en GRH","email":"maomassoudou@gmail.com","whatsapp":"00221775122765","poste":"Chef du service Administration du personnel à la SONAGED SA","pays":"Sénégal","initiales":"MS"},{"id":86,"nom":"KOUAO","prenom":"Saint Raoul Ahi","nomComplet":"Saint Raoul Ahi KOUAO","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Ingénieur en Télécommunications diplômé de l'INP-HB (Côte d'Ivoire) et certifié PMP®, je suis spécia…","email":"raoul.kouao@gmail.com","whatsapp":"+2250505055085","poste":"Senior Project Manager – Telecoms, IT & Infrastructure Transformations","pays":"CÔTE D'IVOIRE","initiales":"SK"},{"id":87,"nom":"SECK","prenom":"Limale","nomComplet":"Limale SECK","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"Je suis igénieur en génie civil diplomé de l'institut polytechnique de Saint-Louis de l'université G…","email":"belimeseck@gmail.com","whatsapp":"+221778652816","poste":"Ingénieur conduteur des travaux","pays":"Sénégal","initiales":"LS"},{"id":88,"nom":"DIOUF","prenom":"Mouhamadou Fada","nomComplet":"Mouhamadou Fada DIOUF","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Maitrise en analyse et politique Economique","email":"mouhamadoufadadiouf@gmail.com","whatsapp":"772797016","poste":"responsable suivi","pays":"SENEGAL","initiales":"MD"},{"id":89,"nom":"KOBON","prenom":"ARMANDE URSELINE","nomComplet":"ARMANDE URSELINE KOBON","programme":"MBA GP Cohorte 1","profil":"MAITRISE EN ÉCONOMIE PUBLIQUE, DIPLÔMÉE DE L'INSTITUT DES TECHNIQUES BANCAIRES, CADRE DE BANQUE","email":"armandeurselinekobon@gmail.com","whatsapp":"002250708543231","poste":"RESPONSABLE D'AGENCE BANCAIRE","pays":"COTE D'IVOIRE","initiales":"AK"},{"id":90,"nom":"ESSE","prenom":"SIALLOU FLORENT MARTIAL","nomComplet":"SIALLOU FLORENT MARTIAL ESSE","programme":"MBA GP Cohorte 1","profil":"INGENIEUR DES TRAVAUX PUBLICS","email":"essesialou.florent@yahoo.fr","whatsapp":"+00225 07 77 66 71 69","poste":"CHEF DE SERVICE BRIGADE DE CONTROLE DES CONTRUCTIONS","pays":"COTE D'IVOIRE","initiales":"SE"},{"id":91,"nom":"KOUYATÉ","prenom":"HOUSSEYNOU","nomComplet":"HOUSSEYNOU KOUYATÉ","programme":"MBA MSS cohorte 2","profil":"Pharmacien-biologiste","email":"housseynou211@gmail.com","whatsapp":"773191429","poste":"Biologiste centre hospitalier national Dalal Jamm","pays":"Sénégal","initiales":"HK"},{"id":92,"nom":"DIOUF","prenom":"Fallou","nomComplet":"Fallou DIOUF","programme":"MBA MSS cohorte 2","profil":"Doctorat d'état pharmacie","email":"niaxar53@gmail.com","whatsapp":"+221772957067","poste":"Pharmacien responsable","pays":"Gabon","initiales":"FD"},{"id":93,"nom":"N'dri","prenom":"Affitchin Paule Annick","nomComplet":"Affitchin Paule Annick N'dri","programme":"MBA ES cohorte 2","profil":"Doctorat en pharmacie","email":"ndripaule09@gmail.com","whatsapp":"+221 783095755","poste":"Assistant pharmacien","pays":"Senegal","initiales":"AN"},{"id":94,"nom":"AFFATONON","prenom":"Lisette Fifamé","nomComplet":"Lisette Fifamé AFFATONON","programme":"MBA MSS cohorte 1","profil":"Docteur en pharmacie","email":"lisetteaffatonon01@gmail.com","whatsapp":"778589063","poste":"Pharmacienne assistante","pays":"Sénégal","initiales":"LA"},{"id":95,"nom":"GUEYE","prenom":"Cheikh Ahmadou Bamba","nomComplet":"Cheikh Ahmadou Bamba GUEYE","programme":"MBA MSS cohorte 2","profil":"Médecin spécialisé en Radiologie, en service à l'Hôpital de la Paix de Ziguinchor","email":"gueye.cab1@gmail.com","whatsapp":"(+221) 77 645 57 87","poste":"Radiologie à l'Hôpital de la Paix de Ziguinchor","pays":"Sénégal","initiales":"CG"},{"id":96,"nom":"N'GORAN","prenom":"MARC ÉLISÉE JOSIAS","nomComplet":"MARC ÉLISÉE JOSIAS N'GORAN","programme":"MBA ES cohorte 2","profil":"Master santé publique","email":"maoempzo@gmail.com","whatsapp":"+2250767499970","poste":"Gestionnaire d'exploitation à la caisse nationale de prévoyance sociale","pays":"Côte d'Ivoire","initiales":"MN"},{"id":97,"nom":"DIOP","prenom":"NDEYE BOURY BADIANE","nomComplet":"NDEYE BOURY BADIANE DIOP","programme":"MBA ES cohorte 1","profil":"Master Professionnel en Sciences de Gestion (Option GP)/ Planificateur","email":"bourydiop10@gmail.com","whatsapp":"+221774412236","poste":"Planificateur","pays":"Sénégal","initiales":"ND"},{"id":98,"nom":"WADE","prenom":"Rokhaya","nomComplet":"Rokhaya WADE","programme":"MBA MEE","profil":"Master","email":"wade.daba@yahoo.fr","whatsapp":"+33669914759","poste":"Responsable HSE","pays":"France","initiales":"RW"},{"id":99,"nom":"Diouf","prenom":"Coumba ndoffene","nomComplet":"Coumba ndoffene Diouf","programme":"MBA MSS cohorte 1","profil":"Doctorat médecine , médecin au centre antipoison, soutien a l'URT","email":"cndiouf@gmail.com","whatsapp":"221775035105","poste":"Médecin de sante publique au Centre anti poison du Sénégal","pays":"Sénégal","initiales":"CD"},{"id":100,"nom":"DIOUF","prenom":"Ndiaya","nomComplet":"Ndiaya DIOUF","programme":"MBA GP Cohorte 1","profil":"Maitrise en Sciences Economiques option Gestion des Entreprises/Chef de Bureau des Etudes/à la Direc…","email":"ndiaya1983@gmail.com","whatsapp":"775643114","poste":"Chef de Bureau des Etudes","pays":"Senegal","initiales":"ND"},{"id":101,"nom":"ESSY","prenom":"Akoua Pélagie","nomComplet":"Akoua Pélagie ESSY","programme":"MBA GP Cohorte 1","profil":"MAITRISE SCIENCE DE GESTION","email":"epeggy26@yahoo.fr","whatsapp":"+ 225 07 48 64 85 39","poste":"TECHNICO-COMMERCIALE","pays":"COTE D'IVOIRE","initiales":"AE"},{"id":102,"nom":"Kengne gana","prenom":"Habib Arnaud","nomComplet":"Habib Arnaud Kengne gana","programme":"MBA MSS cohorte 1","profil":"Docteur en Pharmacie","email":"Habibkengne@gmail.com","whatsapp":"+221778001617","poste":"Pharmacien assistant en officine","pays":"Sénégal","initiales":"HK"},{"id":103,"nom":"TIENE","prenom":"Zoumana Kamagaté Armel","nomComplet":"Zoumana Kamagaté Armel TIENE","programme":"MBA MSS cohorte 1","profil":"Étudiant en 7eme année de médecine","email":"Camp dial Diop Dakar","whatsapp":"773081102","poste":"Aucun","pays":"Aucun","initiales":"ZT"},{"id":104,"nom":"FALL","prenom":"AIDA","nomComplet":"AIDA FALL","programme":"MBA MSS cohorte 1","profil":"Master en biologie Animale spécialité génétiques des populations, Gestionnaire de projet","email":"aidafall770@gmail.com","whatsapp":"221777084701","poste":"Gestionnaire de projet","pays":"Sénégal","initiales":"AF"},{"id":105,"nom":"AMETSA","prenom":"Ignéza","nomComplet":"Ignéza AMETSA","programme":"MBA ACG","profil":"Maîtrise","email":"ignezaametsa@yahoo.fr","whatsapp":"0022891911184","poste":"Budget and Programming Officer au PAM","pays":"Togo","initiales":"IA"},{"id":106,"nom":"AMAVI","prenom":"FLORA","nomComplet":"FLORA AMAVI","programme":"MBA ACG","profil":"Marketing & Stratégies","email":"amaviflora@gmail.com","whatsapp":"00221773443392","poste":"Office Manager","pays":"TOGO","initiales":"FA"},{"id":107,"nom":"NIANZOU épouse KASSI","prenom":"Rebecca Raïssa","nomComplet":"Rebecca Raïssa NIANZOU épouse KASSI","programme":"MBA MSCH","profil":"Ingenieur en Gestion des Ressources Humaines","email":"nianzourebecca@gmail.com","whatsapp":"+2250757259266","poste":"HRBP Business","pays":"Côte d'ivoire","initiales":"RN"},{"id":108,"nom":"THIAM","prenom":"Mouhamed","nomComplet":"Mouhamed THIAM","programme":"MBA ES cohorte 1","profil":"Master Management des Programmes et Services de Santé","email":"mouhamed9210@gmail.com","whatsapp":"00221775893293","poste":"Contrôleur de Gestion","pays":"Sénégal","initiales":"MT"},{"id":109,"nom":"DJIBA","prenom":"FECAME ALINE SITENIE","nomComplet":"FECAME ALINE SITENIE DJIBA","programme":"MBA MSS cohorte 2","profil":"DOCTORAT","email":"feecame@gmail.com","whatsapp":"+221774081686","poste":"Pharmacien Responsable","pays":"Senegal","initiales":"FD"},{"id":110,"nom":"EZIN","prenom":"Richard Gbodja","nomComplet":"Richard Gbodja EZIN","programme":"MBA ACG","profil":"Maîtrise en science économique option finance et comptabilité; enseignant","email":"ezinrichardgarez@gmail.com","whatsapp":"(229)0197114863","poste":"Enseignant du secondaire technique et général","pays":"BENIN","initiales":"RE"},{"id":111,"nom":"NDIAYE","prenom":"ABDOUL DIALIL","nomComplet":"ABDOUL DIALIL NDIAYE","programme":"MBA GP Cohorte 1","profil":"MASTER 2 AUDIT CONTROLE DE GESTION","email":"abdouldialilndiaye@cesag.edu.sn","whatsapp":"+221 779235953","poste":"RESPONSABLE ADMINISTRATIF ET FINANCIER","pays":"SENEGAL","initiales":"AN"},{"id":112,"nom":"KOUYATÉ","prenom":"HOUSSEYNOU","nomComplet":"HOUSSEYNOU KOUYATÉ","programme":"MBA MSS cohorte 1","profil":"Pharmacien-biologiste","email":"housseynou211@gmail.com","whatsapp":"77 319 14 29","poste":"Biologiste clinique centre hospitalier national Dalal Jamm","pays":"Sénégal","initiales":"HK"},{"id":113,"nom":"FERNANDES BASSANGUÊ","prenom":"Leonardo","nomComplet":"Leonardo FERNANDES BASSANGUÊ","programme":"MBA ACG","profil":"Maitrise en Sciences de Gestion, Spécialité : Comptabilité (Bac + 4), Fonction: Comptable du Projet …","email":"Quartier 12 Septembre Antula Bono Bissau","whatsapp":"(+245) 96 662 36 72","poste":"Comptable","pays":"Guinée Bissau","initiales":"LF"},{"id":114,"nom":"SYLL","prenom":"Makhtar","nomComplet":"Makhtar SYLL","programme":"MBA MSS cohorte 1","profil":"Diplôme d'Etat major, médecin urgentiste","email":"makhousyll@gmail.com","whatsapp":"771010974","poste":"Chef de division des secours médicaux de la brigade nationale des sapeurs pompiers","pays":"Sénégal","initiales":"MS"},{"id":115,"nom":"DIOP","prenom":"Assa Angelique Adama","nomComplet":"Assa Angelique Adama DIOP","programme":"MBA MSS cohorte 2","profil":"Responsable Administratif d'une Clinique medico-chirurgicale","email":"diopangelique99@gmail.com","whatsapp":"+221773587894","poste":"Directrice Administrative et Financière","pays":"Sénégal","initiales":"AD"},{"id":116,"nom":"SINDE","prenom":"YAN MAUREL","nomComplet":"YAN MAUREL SINDE","programme":"MBA ACG","profil":"Master en FINANCES: BANQUE ET ASSURANCE","email":"sindeyanmaurel@gmail.com","whatsapp":"+2250758139465","poste":"Comptable technique","pays":"Côte d'Ivoire","initiales":"YS"},{"id":117,"nom":"FALL","prenom":"AIDA","nomComplet":"AIDA FALL","programme":"MBA MSS cohorte 1","profil":"Titulaire d'un MSc en biologie animale, spécialité génétique des populations, obtenu à l'Université …","email":"aidafall770@gmail.com","whatsapp":"221777084701","poste":"Gestionnaire de projet","pays":"Sénégal","initiales":"AF"},{"id":118,"nom":"SOULANOUDJINGAR","prenom":"NEPIDI SONIA","nomComplet":"NEPIDI SONIA SOULANOUDJINGAR","programme":"MBA MSS cohorte 1","profil":"Master II spécialisé en Ingénieurie biomédicale obtenu en 2012. Je travaille dans une  entreprise de…","email":"sonia.nepidi@gmail.com","whatsapp":"+221 77 728 41 46","poste":"Ingénieur biomédicale","pays":"Sénégal","initiales":"NS"},{"id":119,"nom":"DIATTA","prenom":"N'Fally","nomComplet":"N'Fally DIATTA","programme":"MBA IGF","profil":"MBA en Finance-Audit, Chef de service Formation et Amélioration Continue, Production d'Electricité","email":"alydiatta@yahoo.fr","whatsapp":"+221 77 124 87 69","poste":"Chef de service Formation et Amélioration Continue","pays":"SENEGAL","initiales":"ND"},{"id":120,"nom":"FAYE","prenom":"Ndèye Téning","nomComplet":"Ndèye Téning FAYE","programme":"MBA MSS cohorte 1","profil":"diplôme de spécialisation en pédiatrie, Médecin pédiatre , planification et supervisions au niveau d…","email":"ndeyetening@cesag.edu.sn","whatsapp":"221 77 5769201","poste":"Appui technique au bureau Santé Mère- Enfant au niveau de la Direction Régionale de la Santé de Dakar","pays":"Dakar/Sénégal","initiales":"NF"},{"id":121,"nom":"SIGNON","prenom":"AKOUÉLÉ EDWIGE","nomComplet":"AKOUÉLÉ EDWIGE SIGNON","programme":"MBA ES cohorte 1","profil":"Doctorat en pharmacie","email":"edwige.signon@yahoo.com","whatsapp":"781437739","poste":"Pharmacienne assistante","pays":"Sénégal","initiales":"AS"},{"id":122,"nom":"SAMAGASSI","prenom":"SEYDOU","nomComplet":"SEYDOU SAMAGASSI","programme":"MBA MSS cohorte 1","profil":"MASTER 2 en Politique Publique de Développement Socio-Sanitaire / Ingénieur Biomédical/ Expert en ar…","email":"saiidsam2@gmail.com","whatsapp":"0758593864","poste":"Directeur du Centre Régional des Infrastructures, de l'Équipement et de la Maintenance","pays":"COTE D'IVOIRE","initiales":"SS"},{"id":123,"nom":"KOUAME","prenom":"YAO SAINT GUSTAVE","nomComplet":"YAO SAINT GUSTAVE KOUAME","programme":"MBA ES cohorte 1","profil":"DOCTORAT, PHARMACIEN GESTIONNAIRE DE STOCK DES HÔPITAUX, GESTION APPROVISIONNEMENT,ACHAT, VENTE ET R…","email":"saintgustdoc@gmail.com","whatsapp":"+2250585770737","poste":"PHARMACIEN HOSPITALIER GESTIONNAIRE DE STOCK","pays":"COTE D'IVOIRE","initiales":"YK"},{"id":124,"nom":"NIEBA","prenom":"Angeline","nomComplet":"Angeline NIEBA","programme":"MBA MSS cohorte 2","profil":"Doctorat, médecin spécialiste en maladies infectieuses et tropicales au service de maladies infectie…","email":"angelinenieba@gmail.com","whatsapp":"00221 77 408 58 61","poste":"Praticienne hospitalière","pays":"Sénégal","initiales":"AN"},{"id":125,"nom":"SACKO","prenom":"Abdoul Karim Alexie","nomComplet":"Abdoul Karim Alexie SACKO","programme":"MBA IGF","profil":"Maitrise en droit des affaires, Inspecteur de Sécurité Sociale","email":"abdoulkarimalexiesacko@gmail.com","whatsapp":"+22376782977","poste":"Responsable de la Formation","pays":"Mali","initiales":"AS"},{"id":126,"nom":"Gaye","prenom":"Mamadou","nomComplet":"Mamadou Gaye","programme":"MBA AG 25 26 Cohorte 2 (AUF)","profil":"Inspecteur des finances publiques spécialité CADASTRE","email":"gayemamad@gmail.com","whatsapp":"00221774460390","poste":"Inspecteur CSF de Guediawaye","pays":"Senegal","initiales":"MG"},{"id":127,"nom":"AKE","prenom":"Harris","nomComplet":"Harris AKE","programme":"MBA MSS cohorte 1","profil":"Doctorat, Médecin généraliste","email":"rocaake@gmail.com","whatsapp":"+221 778825042","poste":"Médecin","pays":"Sénégal","initiales":"HA"},{"id":128,"nom":"Diagne","prenom":"Bassirou","nomComplet":"Bassirou Diagne","programme":"MBA GP 25 26 Cohorte 2 (AUF)","profil":"Master en SIC","email":"Diagnebassirou88@gmail.com","whatsapp":"77 165 98 82","poste":"Responsable de la Cellule Planification, du Suivi et Évaluation","pays":"Sénégal","initiales":"BD"},{"id":129,"nom":"SENGHOR","prenom":"Mamadou","nomComplet":"Mamadou SENGHOR","programme":"MBA IGF","profil":"Maitrise en Sciences de Gestion - Responsable des Enseignements","email":"senghr0@gmail.com","whatsapp":"775392257","poste":"Directeur des enseignements","pays":"Sénégal","initiales":"MS"},{"id":130,"nom":"YAO","prenom":"KOUAME DENIS","nomComplet":"KOUAME DENIS YAO","programme":"MBA ACG","profil":"Master en ACG-Chargé des Finances","email":"kouamedenisyao@cesag.edu.sn","whatsapp":"+ 225 0708427297","poste":"Chargé des Finances","pays":"Senegal","initiales":"KY"},{"id":131,"nom":"KOUNDOUL","prenom":"NDEYE YACINE","nomComplet":"NDEYE YACINE KOUNDOUL","programme":"MBA ACG","profil":"Master II Audit et Contrôle de Gestion, Contrôleur de Gestion,","email":"koundoulny@yahoo.fr","whatsapp":"77 952 68 75","poste":"Contrôleur de Gestion","pays":"Sénégal","initiales":"NK"},{"id":132,"nom":"TUHO","prenom":"Kinambin","nomComplet":"Kinambin TUHO","programme":"MBA IGF","profil":"Ingénieur Agro Alimentaire, Coordonnateur Pédagogique","email":"kinambin@gmail.com","whatsapp":"+2250749760852","poste":"Coordonnateur Pédagogique","pays":"Côte-d'Ivoire","initiales":"KT"}];
+
+const PROG_COLORS = {
+  'MBA GP 25 26 Cohorte 1':       { color:'#006B3F', bg:'#E8F5EE' },
+  'MBA AG 25 26 Cohorte 1':       { color:'#1E6FB5', bg:'#E8F1FB' },
+  'MBA ACG':                       { color:'#7B2D8B', bg:'#F3E8F6' },
+  'MBA GP Cohorte 1':             { color:'#004D2C', bg:'#D9EDE3' },
+  'MBA GP 25 26 Cohorte 2 (AUF)': { color:'#0A8C52', bg:'#DFF2EA' },
+  'MBA MSS cohorte 1':            { color:'#C0392B', bg:'#FAEAEA' },
+  'MBA IGF':                       { color:'#D97706', bg:'#FEF3E2' },
+  'MBA MEE':                       { color:'#0D9488', bg:'#E0F5F1' },
+  'MBA AG 25 26 Cohorte 2 (AUF)': { color:'#2563EB', bg:'#E8F4FB' },
+  'MBA MSS cohorte 2':            { color:'#B91C1C', bg:'#FBECEB' },
+  'MBA AG  Cohorte 1':            { color:'#1E40AF', bg:'#D6E8F2' },
+  'MBA MSCH':                      { color:'#C2410C', bg:'#FFF7ED' },
+  'MBA ES cohorte 1':             { color:'#047857', bg:'#D5F5EE' },
+  'MBA ES cohorte 2':             { color:'#065F46', bg:'#D0EFE8' },
+  'MBA MCID':                      { color:'#6D28D9', bg:'#F0E6F6' },
+};
+function getPC(prog) {
+  return PROG_COLORS[prog] || { color:'#006B3F', bg:'#E8F5EE' };
+}
+
+const ICONS = {
+  briefcase: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`,
+  globe:     `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  user:      `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  mail:      `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+  phone:     `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.9a16 16 0 0 0 5.96 5.96l1.26-1.26a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+};
+
+function formatWhatsApp(num) {
+  if (!num || num === '—') return null;
+  let clean = num.replace(/[\s\(\)\-]/g, '').replace(/^\+/, '');
+  if (clean.length < 8) return null;
+  return clean;
+}
+
+const progOrder = Object.keys(
+  DATA.reduce((acc, r) => { acc[r.programme] = (acc[r.programme]||0)+1; return acc; }, {})
+).sort((a,b) => {
+  const ca = DATA.filter(r=>r.programme===a).length;
+  const cb = DATA.filter(r=>r.programme===b).length;
+  return cb - ca;
+});
+
+const grouped = {};
+progOrder.forEach(p => { grouped[p] = DATA.filter(r => r.programme === p); });
+
+function cardHTML(p, pc) {
+  const poste  = p.poste  && p.poste  !== 'Non renseigné' ? p.poste  : '—';
+  const pays   = p.pays   && p.pays   !== 'Non renseigné' ? p.pays   : '—';
+  const profil = p.profil || '—';
+  const email  = p.email  || '—';
+  const wa     = p.whatsapp || '—';
+  const waClean = formatWhatsApp(wa);
+  const photoPath = `photos/${p.id}.jpg`;
+
+  const emailPill = email !== '—' 
+    ? `<div class="contact-pill email" onclick="copyEmail(this, '${email.replace(/'/g, "\'")}')" title="Cliquer pour copier">${ICONS.mail}<span>${email}</span></div>`
+    : `<div class="contact-pill email">${ICONS.mail}<span>—</span></div>`;
+
+  const waPill = waClean 
+    ? `<a href="https://wa.me/${waClean}" target="_blank" rel="noopener" class="contact-pill whatsapp" title="Ouvrir WhatsApp">${ICONS.phone}<span>${wa}</span></a>`
+    : `<div class="contact-pill whatsapp">${ICONS.phone}<span>${wa}</span></div>`;
+
+  return `<div class="card" data-id="${p.id}" data-name="${p.nomComplet.toLowerCase()}" data-prog="${p.programme}"
+         style="--prog-color:${pc.color}; --prog-bg:${pc.bg}">
+    <div class="card-accent"></div>
+    <div class="card-top">
+      <div class="avatar" style="background:${pc.color}">
+        <img src="${photoPath}" alt="" onerror="this.style.display='none'">
+        ${p.initiales}
+      </div>
+      <div class="card-identity">
+        <div class="card-name">${p.nomComplet}</div>
+        <span class="card-prog-chip">${p.programme}</span>
+      </div>
+    </div>
+    <div class="card-divider"></div>
+    <div class="card-body">
+      <div class="info-row">
+        ${ICONS.briefcase}
+        <div>
+          <div class="label">Poste</div>
+          <div class="val">${poste}</div>
+        </div>
+      </div>
+      <div class="info-row">
+        ${ICONS.globe}
+        <div>
+          <div class="label">Pays</div>
+          <div class="val single">${pays}</div>
+        </div>
+      </div>
+      <div class="info-row profil-row">
+        ${ICONS.user}
+        <div>
+          <div class="label">Profil</div>
+          <div class="val">${profil}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      ${emailPill}
+      ${waPill}
+    </div>
+  </div>`;
+}
+
+function copyEmail(el, email) {
+  navigator.clipboard.writeText(email).then(() => {
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 1800);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = email;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 1800);
+  });
+}
+
+const tabsInner = document.getElementById('tabsInner');
+const allBtn = document.createElement('button');
+allBtn.className = 'tab-btn active';
+allBtn.dataset.prog = 'all';
+allBtn.innerHTML = `Tous <span class="tab-badge">${DATA.length}</span>`;
+tabsInner.appendChild(allBtn);
+
+progOrder.forEach(prog => {
+  const cnt = grouped[prog].length;
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn';
+  btn.dataset.prog = prog;
+  btn.innerHTML = `${prog} <span class="tab-badge">${cnt}</span>`;
+  tabsInner.appendChild(btn);
+});
+
+const main = document.getElementById('main');
+progOrder.forEach(prog => {
+  const pc = getPC(prog);
+  const auds = grouped[prog];
+  const sec = document.createElement('div');
+  sec.className = 'prog-section visible';
+  sec.dataset.prog = prog;
+  sec.innerHTML = `
+    <div class="section-head">
+      <h2 class="section-title" style="color:${pc.color}">${prog}</h2>
+      <div class="section-sep" style="background:linear-gradient(90deg,${pc.bg},transparent)"></div>
+      <span class="section-count">${auds.length} auditeur${auds.length>1?'s':''}</span>
+    </div>
+    <div class="cards-grid">${auds.map(p=>cardHTML(p,pc)).join('')}</div>`;
+  main.appendChild(sec);
+});
+
+let currentProg = 'all';
+function switchTab(prog) {
+  currentProg = prog;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.prog === prog));
+  document.querySelectorAll('.prog-section').forEach(s => {
+    if (prog === 'all') s.classList.add('visible');
+    else s.classList.toggle('visible', s.dataset.prog === prog);
+  });
+  applySearch();
+}
+tabsInner.addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (btn) switchTab(btn.dataset.prog);
+});
+
+const searchInput = document.getElementById('searchInput');
+const visibleCount = document.getElementById('visibleCount');
+const noResult = document.getElementById('noResult');
+
+function applySearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  let total = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const inTab = currentProg === 'all' || card.dataset.prog === currentProg;
+    const match = !q || card.dataset.name.includes(q)
+      || card.dataset.prog.toLowerCase().includes(q)
+      || card.textContent.toLowerCase().includes(q);
+    const show = inTab && match;
+    card.style.display = show ? '' : 'none';
+    if (show) total++;
+  });
+  visibleCount.textContent = total;
+  noResult.style.display = total === 0 ? 'block' : 'none';
+}
+searchInput.addEventListener('input', applySearch);
+</script>
+</body>
+</html>
